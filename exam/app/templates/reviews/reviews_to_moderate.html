@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% from 'pagination.html' import render_pagination %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Рецензии пользователей</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Название книги</th>
+                    <th>Пользователь</th>
+                    <th>Дата добавления</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                    <tr>
+                        <td>{{ review.book.name }}</td>
+                        <td>{{ review.user.full_name }}</td>
+                        <td>{{ review.created_at }}</td>
+                        <td>
+                            <a class="btn btn-primary" href="{{ url_for('books.review', review_id=review.id) }}">Рассмотреть</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mb-5">
+            {{ render_pagination(pagination, request.endpoint) }}
+        </div>
+    </div>
+{% endblock %}

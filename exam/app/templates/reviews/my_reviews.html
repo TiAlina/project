@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% from 'pagination.html' import render_pagination %}
+
+{% block content %}
+    <div class="container">
+        <h2 class="my-3 text-center text-uppercase font-weight-bold">Сортировка ваших отзывов</h2>
+        <form action="{{ url_for('books.my_reviews')}}">
+            <div class="d-flex mb-4" style="justify-content: space-evenly;">
+                <div>
+                    <select class="form-select me-4" style="width: 300px;" id="sort_reviews" name="sort_reviews" title="Сортировка отзывов">
+                        <option value="new" {% if "new" == request.args.get('sort_reviews') %}selected{% endif %}>По новизне</option>
+                        <option value="positive" {% if "positive" == request.args.get('sort_reviews') %}selected{% endif %}>Сначала положительные</option>
+                        <option value="negative" {% if "negative" == request.args.get('sort_reviews') %}selected{% endif %}>Сначала отрицательные</option>
+                    </select>
+                </div>
+                <div style="height: 50px;">
+                    <button type="submit" class="btn btn-dark">Сортировать</button>
+                </div>
+            </div>
+        </form>
+        {% for review in book_reviews %}
+            <div class="card my-3">
+                <h5 class="card-header">{{ review.user.full_name }}</h5>
+                <span class="px-3">{{ review.created_at }}</span>
+                <div class="card-body">
+                    <h5 class="card-title">Оценка: {{ review.rating_word }}</h5>
+                    <br>
+                    <div class="card-text">{{ review.text | safe }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="container">
+        <h2 class="my-3 text-center text-uppercase font-weight-bold">Ваши отзывы</h2>
+        {% for review in my_reviews %}
+            <div class="card my-3">
+                <h5 class="card-header">Дата: {{ review.created_at }}</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Оценка: {{ review.rating_word }}</h5>
+                    <br>
+                    <div class="card-text">{{ review.text | safe }}</div>
+                    {% if review.status.id == 1 %}
+                        <div class="card-text"><strong>Статус:</strong> <div class="text-primary"> {{review.status.name}}</div></div>
+                    {% elif review.status.id == 2 %}
+                        <div class="card-text text-success"><strong>Статус:</strong> {{review.status.name}}</div>
+                    {% else %}
+                        <div class="card-text text-danger"><strong>Статус:</strong> {{review.status.name}}</div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-5">
+        {{ render_pagination(pagination, request.endpoint, params) }}
+    </div>
+{% endblock %}
